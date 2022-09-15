@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-'''script to list all name starting with N'''
+'''print all cities from db'''
 
 import MySQLdb
 import sys
 
 
-def list_N():
-    '''lists all states with a name that starts with N'''
+def list_all():
+    '''lists all cities from db'''
     username = sys.argv[1]
     password = sys.argv[2]
     db_name = sys.argv[3]
@@ -16,16 +16,17 @@ def list_N():
     db = MySQLdb.connect(host=host, user=username, passwd=password,
                          db=db_name, port=port)
     cur = db.cursor()
-    cur.execute('SELECT * FROM states WHERE name regexp "^N.*" ' +
-                'ORDER BY states.id ASC')
+    cur.execute('SELECT cities.id, cities.name, states.name FROM cities' +
+                ' INNER JOIN states ON cities.state_id = states.id' +
+                ' ORDER BY cities.id ASC;')
     result = cur.fetchall()
     cur.close()
     db.close()
+
     if result:
         for row in result:
-            if row[1][0] == "N":
-                print(row)
+            print(row)
 
 
-if __name__ == "__main__":
-    list_N()
+if __name__ == '__main__':
+    list_all()
