@@ -1,31 +1,27 @@
 #!/usr/bin/python3
-'''script to list all name starting with N'''
-
+"""
+Script that lists all states with a name starting with N (upper N)
+from the database
+"""
 import MySQLdb
-import sys
+from sys import argv
 
+# The code should not be executed when imported
+if __name__ == '__main__':
+    # make a connection to the database
+    db = MySQLdb.connect(host="localhost", port=3306, user=argv[1],
+                         passwd=argv[2], db=argv[3])
 
-def list_N():
-    '''lists all states with a name that starts with N'''
-    username = sys.argv[1]
-    password = sys.argv[2]
-    db_name = sys.argv[3]
-    host = 'localhost'
-    port = 3306
-
-    db = MySQLdb.connect(host=host, user=username, passwd=password,
-                         db=db_name, port=port)
+    # It gives us the ability to have multiple seperate working environments
+    # through the same connection to the database.
     cur = db.cursor()
-    cur.execute('SELECT * FROM states WHERE name regexp "^N.*" ' +
-                'ORDER BY states.id ASC')
-    result = cur.fetchall()
+
+    cur.execute("SELECT * FROM states WHERE name\
+                LIKE BINARY 'N%' ORDER BY id ASC")
+
+    rows = cur.fetchall()
+    for i in rows:
+        print(i)
+    # Clean up process
     cur.close()
     db.close()
-    if result:
-        for row in result:
-            if row[1][0] == "N":
-                print(row)
-
-
-if __name__ == "__main__":
-    list_N()
